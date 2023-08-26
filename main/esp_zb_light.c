@@ -8,8 +8,7 @@
 #include "driver/gpio.h"
 #include "DHT22.h"
 
-static const char *TAG = "LIGHT";
-/********************* Define functions **************************/
+static const char *TAG = "DEMO";
 void reportAttribute(uint8_t endpoint, uint16_t clusterID, uint16_t attributeID, void *value, uint8_t value_length)
 {
     esp_zb_zcl_report_attr_cmd_t cmd = {
@@ -42,7 +41,6 @@ void button_task(void *pvParameters)
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
-
 void dht22_task(void *pvParameters)
 {
     while (1)
