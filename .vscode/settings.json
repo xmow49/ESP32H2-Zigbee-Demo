@@ -1,0 +1,12 @@
+{
+  "idf.portWin": "COM17",
+  "idf.adapterTargetName": "esp32h2",
+  "idf.openOcdConfigs": ["board/esp32h2-ftdi.cfg"],
+  "files.associations": {
+    "*.vhd": "vhdl",
+    "*.yaml": "home-assistant",
+    "esp_zb_light.h": "c",
+    "am2302_rmt.h": "c"
+  },
+  "idf.flashType": "UART"
+}
