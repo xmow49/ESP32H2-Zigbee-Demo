@@ -31,7 +31,7 @@ void button_task(void *pvParameters)
     uint8_t last_state = 0;
     while (1)
     {
-        uint8_t button_state = !gpio_get_level(GPIO_NUM_12);
+        uint8_t button_state = gpio_get_level(GPIO_NUM_12);
         if (button_state != last_state)
         {
             ESP_LOGI(TAG, "Button changed: %d", button_state);
@@ -51,7 +51,7 @@ void dht22_task(void *pvParameters)
             errorHandler(ret);
         else
         {
-            ESP_LOGI(TAG, "Hum: %.1f Tmp: %.1f\n", getHumidity(), getTemperature());
+            ESP_LOGI(TAG, "Hum: %.1f Tmp: %.1f", getHumidity(), getTemperature());
             uint16_t temperature = (uint16_t)(getTemperature() * 100);
             uint16_t humidity = (uint16_t)(getHumidity() * 100);
             reportAttribute(HA_ESP_LIGHT_ENDPOINT, ESP_ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_ID, &temperature, 2);
@@ -81,8 +81,7 @@ static esp_err_t attr_cb(const esp_zb_zcl_set_attr_value_message_t message)
                 if (message.attribute == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID && message.data.type == ESP_ZB_ZCL_ATTR_TYPE_BOOL)
                 {
                     light_state = message.data.value ? *(bool *)message.data.value : light_state;
-                    gpio_set_direction(GPIO_NUM_3, GPIO_MODE_OUTPUT);
-                    gpio_set_level(GPIO_NUM_3, light_state);
+                    gpio_set_level(GPIO_NUM_0, light_state);
                     ESP_LOGI(TAG, "Light sets to %s", light_state ? "On" : "Off");
                 }
             }
@@ -230,7 +229,7 @@ static void esp_zb_task(void *pvParameters)
 
     // ------------------------------ Create endpoint list ------------------------------
     esp_zb_ep_list_t *esp_zb_ep_list = esp_zb_ep_list_create();
-    esp_zb_ep_list_add_ep(esp_zb_ep_list, esp_zb_cluster_list, HA_ESP_LIGHT_ENDPOINT, ESP_ZB_AF_HA_PROFILE_ID, ESP_ZB_HA_IAS_ZONE_ID);
+    esp_zb_ep_list_add_ep(esp_zb_ep_list, esp_zb_cluster_list, HA_ESP_LIGHT_ENDPOINT, ESP_ZB_AF_HA_PROFILE_ID, ESP_ZB_HA_ON_OFF_LIGHT_DEVICE_ID);
 
     // ------------------------------ Register Device ------------------------------
     esp_zb_device_register(esp_zb_ep_list);
@@ -252,4 +251,9 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
     /* hardware related and device init */
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
+
+    gpio_set_direction(GPIO_NUM_12, GPIO_MODE_INPUT);
+
+    gpio_set_direction(GPIO_NUM_0, GPIO_MODE_OUTPUT);
+    gpio_set_level(GPIO_NUM_0, 0);
 }

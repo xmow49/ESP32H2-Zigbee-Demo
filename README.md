@@ -19,5 +19,5 @@ This project is a demo Zigbee device based on the ESP32-H2 / ESP32-C6
 | GPIO   | Function              |
 | ------ | --------------------- |
 | GPIO8  | DHT22 data            |
-| GPIO3  | Binary output (LED)   |
+| GPIO0  | Binary output (LED)   |
 | GPIO12 | Binary input (Button) |
