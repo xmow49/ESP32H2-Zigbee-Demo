@@ -1,5 +1,5 @@
 {
-  "idf.portWin": "COM17",
+  "idf.portWin": "COM6",
   "idf.adapterTargetName": "esp32h2",
   "idf.openOcdConfigs": ["board/esp32h2-ftdi.cfg"],
   "files.associations": {
