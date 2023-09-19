@@ -78,7 +78,7 @@ static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t 
              message->attribute.id, message->attribute.data.size);
     if (message->info.dst_endpoint == HA_ESP_LIGHT_ENDPOINT)
     {
-        if (message->attribute.id == ESP_ZB_ZCL_CLUSTER_ID_ON_OFF)
+        if (message->info.cluster == ESP_ZB_ZCL_CLUSTER_ID_ON_OFF)
         {
             if (message->attribute.id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID && message->attribute.data.type == ESP_ZB_ZCL_ATTR_TYPE_BOOL)
             {
