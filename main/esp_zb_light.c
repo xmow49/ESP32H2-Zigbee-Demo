@@ -10,6 +10,14 @@
 #include "DHT22.h"
 
 static const char *TAG = "DEMO";
+
+#define DEFINE_PSTRING(var, str)   \
+    const struct                   \
+    {                              \
+        unsigned char len;         \
+        char content[sizeof(str)]; \
+    }(var) = {sizeof(str) - 1, (str)}
+
 void reportAttribute(uint8_t endpoint, uint16_t clusterID, uint16_t attributeID, void *value, uint8_t value_length)
 {
     esp_zb_zcl_report_attr_cmd_t cmd = {
@@ -169,16 +177,19 @@ static void esp_zb_task(void *pvParameters)
     uint32_t ApplicationVersion = 0x0001;
     uint32_t StackVersion = 0x0002;
     uint32_t HWVersion = 0x0002;
-    uint8_t ManufacturerName[] = {14, 'G', 'a', 'm', 'm', 'a', 'T', 'r', 'o', 'n', 'i', 'q', 'u', 'e', 's'}; // warning: this is in format {length, 'string'} :
-    uint8_t ModelIdentifier[] = {13, 'E', 'S', 'P', '3', '2', '-', 'H', '2', ' ', 'D', 'e', 'm', 'o'};
-    uint8_t DateCode[] = {8, '2', '0', '2', '3', '0', '8', '2', '6'};
+    DEFINE_PSTRING(ManufacturerName, "GammaTroniques");
+    DEFINE_PSTRING(ModelIdentifier, "ESP32-H2 Demo");
+    DEFINE_PSTRING(DateCode, "20230826");
+    // You can also use the following code to define strings:  {length, 'string'}
+    // uint8_t ModelIdentifier[] = {13, 'E', 'S', 'P', '3', '2', '-', 'H', '2', ' ', 'D', 'e', 'm', 'o'};
+
     esp_zb_attribute_list_t *esp_zb_basic_cluster = esp_zb_basic_cluster_create(&basic_cluster_cfg);
     esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_APPLICATION_VERSION_ID, &ApplicationVersion);
     esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_STACK_VERSION_ID, &StackVersion);
     esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_HW_VERSION_ID, &HWVersion);
-    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, ManufacturerName);
-    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, ModelIdentifier);
-    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_DATE_CODE_ID, DateCode);
+    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, (void *)&ManufacturerName);
+    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, (void *)&ModelIdentifier);
+    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_DATE_CODE_ID, (void *)&DateCode);
 
     // ------------------------------ Cluster IDENTIFY ------------------------------
     esp_zb_identify_cluster_cfg_t identify_cluster_cfg = {
